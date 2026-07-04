@@ -1,0 +1,121 @@
+# === Unreal Engine ===
+
+TODO.md
+FeaturePlan.md
+FeaturePlans/
+
+# Engine-generated folders
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+*.target
+*.csproj
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+*.tlog
+*.log
+*.pdb
+*.idb
+*.ipch
+*.dll
+*.exe
+
+# Autosaves, Backups, Cooked Content
+Autosaves/
+Backup/
+Saved/Cooked/
+Saved/Logs/
+Saved/Config/WindowsEditor/
+
+# === Media & Exported Assets ===
+# Ignore images and video exports (handled by Dropbox, not Git)
+**/Media/**/*.png
+**/Media/**/*.jpg
+**/Media/**/*.jpeg
+**/Media/**/*.gif
+**/Media/**/*.mp4
+**/Media/**/*.mov
+**/Media/**/*.webm
+
+# Allow metadata files (important for Dropbox search)
+!**/Media/**/*.meta.txt
+
+# Screenshots, raw captures
+**/Screenshots/
+**/Thumbnails/
+**/Exports/
+**/Recordings/
+
+# === Compiled Python cache ===
+*.pyc
+*.pyo
+__pycache__/
+
+# === JetBrains Rider ===
+.idea/
+*.iws
+*.iml
+.idea_modules/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+
+# === General OS Clutter ===
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Ignore crash reports
+*.dmp
+
+# Ignore macOS Spotlight files
+.AppleDouble
+.LSOverride
+
+# === Keep these folders (important Unreal structure) ===
+!Source/
+!Content/
+!Config/
+!*.uproject
+
+# === Blender, photoshop, substance painter and other assets with big sizes ===
+Art/
+Assets/
+
+# === Additional asset and video editing files ===
+*.blend
+*.psd
+*.xcf
+*.prproj
+*.drp
+*.aep
+*.aegraphic
+*.fcpxml
+*.fcpbundle
+*.prsl
+*.pek
+*.cfa
+*.autosave
+.videos/
+.cache/
+.RushMediaCache/
+.Adobe/
+
+# === Ignore local settings ====
+.claude/settings.local.json
+*.uproject.DotSettings.user
