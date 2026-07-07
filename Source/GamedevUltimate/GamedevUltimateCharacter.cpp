@@ -78,6 +78,14 @@ void AGamedevUltimateCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		                                   &AGamedevUltimateCharacter::GoTriggerStatesInput);
 		EnhancedInputComponent->BindAction(TriggerStatesAction, ETriggerEvent::Canceled, this,
 		                                   &AGamedevUltimateCharacter::CancelTriggerStatesInput);
+
+		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this,
+		                                   &AGamedevUltimateCharacter::Rotate);
+		
+		EnhancedInputComponent->BindAction(TestInputActionInstanceAction, ETriggerEvent::Ongoing, this,
+		                                   &AGamedevUltimateCharacter::TestInputActionInstance);
+		EnhancedInputComponent->BindAction(TestInputActionInstanceAction, ETriggerEvent::Triggered, this,
+										   &AGamedevUltimateCharacter::TestInputActionInstance);
 	}
 	else
 	{
@@ -200,6 +208,40 @@ void AGamedevUltimateCharacter::CancelTriggerStatesInput(const FInputActionValue
 			2.0f,
 			FColor::Green,
 			TEXT("TriggerStatesAction Cancelled!")
+		);
+	}
+}
+
+void AGamedevUltimateCharacter::Rotate(const FInputActionValue& Value)
+{
+	if (GetController())
+	{
+		// pass the rotation inputs
+		AddControllerYawInput(Value.Get<float>());
+	}
+}
+
+void AGamedevUltimateCharacter::TestInputActionInstance(const FInputActionInstance& Instance)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			6,
+			2.0f,
+			FColor::Green,
+			FString::Printf(TEXT("Triggered: %f"), Instance.GetTriggeredTime())
+		);
+		GEngine->AddOnScreenDebugMessage(
+			7,
+			2.0f,
+			FColor::Green,
+			FString::Printf(TEXT("ElapsedTime: %f"), Instance.GetElapsedTime())
+		);
+		GEngine->AddOnScreenDebugMessage(
+			8,
+			2.0f,
+			FColor::Green,
+			FString::Printf(TEXT("Value %f"), Instance.GetValue().Get<float>())
 		);
 	}
 }

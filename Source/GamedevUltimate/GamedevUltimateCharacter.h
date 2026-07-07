@@ -50,9 +50,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* MouseLookAction;
 	
-	/** Module 1 test */
+	/** Module 1 */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* TriggerStatesAction;
+	
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* RotateAction;
+	
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* TestInputActionInstanceAction;
 	
 public:
 	AGamedevUltimateCharacter();
@@ -90,6 +96,10 @@ protected:
 	void GoTriggerStatesInput(const FInputActionInstance& Instance);
 	
 	void CancelTriggerStatesInput(const FInputActionValue& Value);
+	
+	void Rotate(const FInputActionValue& Value);
+	
+	void TestInputActionInstance(const FInputActionInstance& Instance);
 
 protected:
 
