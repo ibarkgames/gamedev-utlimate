@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "GamedevUltimateCharacter.generated.h"
 
+struct FInputActionInstance;
 class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
@@ -43,11 +44,15 @@ protected:
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
-	class UInputAction* LookAction;
+	UInputAction* LookAction;
 
 	/** Mouse Look Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
-	class UInputAction* MouseLookAction;
+	UInputAction* MouseLookAction;
+	
+	/** Module 1 test */
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* TriggerStatesAction;
 	
 public:
 	AGamedevUltimateCharacter();
@@ -75,6 +80,16 @@ protected:
 	/** Handles jump end inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
+	
+	void StartTriggerStatesInput(const FInputActionValue& Value);
+	
+	void CompleteTriggerStatesInput(const FInputActionValue& Value);
+	
+	void TriggerTriggerStatesInput(const FInputActionInstance& Instance);
+	
+	void GoTriggerStatesInput(const FInputActionInstance& Instance);
+	
+	void CancelTriggerStatesInput(const FInputActionValue& Value);
 
 protected:
 
