@@ -60,6 +60,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* TestInputActionInstanceAction;
 	
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* TestTriggerQualifiersAction;
+	
+	
 public:
 	AGamedevUltimateCharacter();
 
@@ -100,6 +104,8 @@ protected:
 	void Rotate(const FInputActionValue& Value);
 	
 	void TestInputActionInstance(const FInputActionInstance& Instance);
+	
+	void TestTriggerQualifiers(const FInputActionInstance& Instance);
 
 protected:
 

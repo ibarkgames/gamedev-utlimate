@@ -81,11 +81,14 @@ void AGamedevUltimateCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 
 		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this,
 		                                   &AGamedevUltimateCharacter::Rotate);
-		
+
 		EnhancedInputComponent->BindAction(TestInputActionInstanceAction, ETriggerEvent::Ongoing, this,
 		                                   &AGamedevUltimateCharacter::TestInputActionInstance);
 		EnhancedInputComponent->BindAction(TestInputActionInstanceAction, ETriggerEvent::Triggered, this,
-										   &AGamedevUltimateCharacter::TestInputActionInstance);
+		                                   &AGamedevUltimateCharacter::TestInputActionInstance);
+
+		EnhancedInputComponent->BindAction(TestTriggerQualifiersAction, ETriggerEvent::Triggered, this,
+		                                   &AGamedevUltimateCharacter::TestTriggerQualifiers);
 	}
 	else
 	{
@@ -242,6 +245,19 @@ void AGamedevUltimateCharacter::TestInputActionInstance(const FInputActionInstan
 			2.0f,
 			FColor::Green,
 			FString::Printf(TEXT("Value %f"), Instance.GetValue().Get<float>())
+		);
+	}
+}
+
+void AGamedevUltimateCharacter::TestTriggerQualifiers(const FInputActionInstance& Instance)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			9,
+			2.0f,
+			FColor::Green,
+			FString::Printf(TEXT("Triggered: %f"), Instance.GetTriggeredTime())
 		);
 	}
 }
