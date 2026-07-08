@@ -52,10 +52,10 @@ protected:
 	
 	/** Module 1 */
 	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* TriggerStatesAction;
+	UInputAction* TestTriggerStatesAction;
 	
 	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* RotateAction;
+	UInputAction* TestRotateAction;
 	
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* TestInputActionInstanceAction;
@@ -63,12 +63,29 @@ protected:
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* TestTriggerQualifiersAction;
 	
+	/** Module 1 Movement Abilities */
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* Gu_MoveAction;
+	
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* Gu_SprintAction;
+	
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* Gu_ChargedJumpAction;
+	
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* Gu_CrouchAction;
+	
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* Gu_DashAction;
+	
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* Gu_FlyAction;
 	
 public:
 	AGamedevUltimateCharacter();
 
 protected:
-
 	/** Called from Input Actions for movement input */
 	void MoveInput(const FInputActionValue& Value);
 
@@ -82,6 +99,9 @@ protected:
 	/** Handles move inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
+	
+	UFUNCTION(BlueprintCallable, Category="Input")
+	virtual void DoFly(float Right, float Forward);
 
 	/** Handles jump start inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
@@ -91,35 +111,95 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 	
-	void StartTriggerStatesInput(const FInputActionValue& Value);
+	void TestStartedTriggerStates(const FInputActionValue& Value);
 	
-	void CompleteTriggerStatesInput(const FInputActionValue& Value);
+	void TestCompletedTriggerStates(const FInputActionValue& Value);
 	
-	void TriggerTriggerStatesInput(const FInputActionInstance& Instance);
+	void TestTriggeredTriggerStates(const FInputActionInstance& Instance);
 	
-	void GoTriggerStatesInput(const FInputActionInstance& Instance);
+	void TestOnGoingTriggerStates(const FInputActionInstance& Instance);
 	
-	void CancelTriggerStatesInput(const FInputActionValue& Value);
+	void TestCancelledTriggerStates(const FInputActionValue& Value);
 	
-	void Rotate(const FInputActionValue& Value);
+	void TestRotate(const FInputActionValue& Value);
 	
 	void TestInputActionInstance(const FInputActionInstance& Instance);
 	
 	void TestTriggerQualifiers(const FInputActionInstance& Instance);
-
-protected:
-
+	
+	void GuMove(const FInputActionValue& Value);
+	
+	void GuSprint(const FInputActionInstance& Instance);
+	
+	void GuChargedJumpStart(const FInputActionInstance& Instance);
+	
+	void GuChargedJumpEnd(const FInputActionInstance& Instance);
+	
+	void GuCrouch(const FInputActionValue& Value);
+	
+	void Gu_Dash(const FInputActionInstance& Instance);
+	
+	void Gu_FlyStart(const FInputActionValue& Value);
+	
+	void Gu_FlyEnd(const FInputActionValue& Value);
+	
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick( float DeltaTime ) override;
 	
+	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	
+	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
+	
 public:
-
 	/** Returns the first person mesh **/
 	USkeletalMeshComponent* GetFirstPersonMesh() const { return FirstPersonMesh; }
 
 	/** Returns first person camera component **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float RunningSpeed{400.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float SprintingSpeed{800.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float DefaultJumpZVelocity{420.f};
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	bool bIsSprinting{false};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float ChargedJumpZVelocity{840.f};
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	bool bIsChargedJumping{false};
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float DefaultCameraHeight{};
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float TargetCameraHeight{};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float CameraCrouchOffset{64.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float CameraInterpolationSpeed{8.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float DashDirectionalVelocity{1200.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float DashElevationVelocity{200.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float FlyStartElevationVelocity{50.f};
 };
-
