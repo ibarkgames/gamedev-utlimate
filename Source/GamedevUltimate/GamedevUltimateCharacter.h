@@ -50,19 +50,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* MouseLookAction;
 	
-	/** Module 1 */
-	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* TestTriggerStatesAction;
-	
-	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* TestRotateAction;
-	
-	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* TestInputActionInstanceAction;
-	
-	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* TestTriggerQualifiersAction;
-	
 	/** Module 1 Movement Abilities */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* WalkAction;
@@ -113,22 +100,6 @@ protected:
 	/** Handles jump end inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
-	
-	void TestStartedTriggerStates(const FInputActionValue& Value);
-	
-	void TestCompletedTriggerStates(const FInputActionValue& Value);
-	
-	void TestTriggeredTriggerStates(const FInputActionInstance& Instance);
-	
-	void TestOnGoingTriggerStates(const FInputActionInstance& Instance);
-	
-	void TestCancelledTriggerStates(const FInputActionValue& Value);
-	
-	void TestRotate(const FInputActionValue& Value);
-	
-	void TestInputActionInstance(const FInputActionInstance& Instance);
-	
-	void TestTriggerQualifiers(const FInputActionInstance& Instance);
 	
 	void DoWalk(const FInputActionInstance& Instance);
 	

@@ -71,29 +71,7 @@ void AGamedevUltimateCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this,
 		                                   &AGamedevUltimateCharacter::LookInput);
 
-		// Module 1 test
-		EnhancedInputComponent->BindAction(TestTriggerStatesAction, ETriggerEvent::Started, this,
-		                                   &AGamedevUltimateCharacter::TestStartedTriggerStates);
-		EnhancedInputComponent->BindAction(TestTriggerStatesAction, ETriggerEvent::Completed, this,
-		                                   &AGamedevUltimateCharacter::TestCompletedTriggerStates);
-		EnhancedInputComponent->BindAction(TestTriggerStatesAction, ETriggerEvent::Triggered, this,
-		                                   &AGamedevUltimateCharacter::TestTriggeredTriggerStates);
-		EnhancedInputComponent->BindAction(TestTriggerStatesAction, ETriggerEvent::Ongoing, this,
-		                                   &AGamedevUltimateCharacter::TestOnGoingTriggerStates);
-		EnhancedInputComponent->BindAction(TestTriggerStatesAction, ETriggerEvent::Canceled, this,
-		                                   &AGamedevUltimateCharacter::TestCancelledTriggerStates);
-
-		EnhancedInputComponent->BindAction(TestRotateAction, ETriggerEvent::Triggered, this,
-		                                   &AGamedevUltimateCharacter::TestRotate);
-
-		EnhancedInputComponent->BindAction(TestInputActionInstanceAction, ETriggerEvent::Ongoing, this,
-		                                   &AGamedevUltimateCharacter::TestInputActionInstance);
-		EnhancedInputComponent->BindAction(TestInputActionInstanceAction, ETriggerEvent::Triggered, this,
-		                                   &AGamedevUltimateCharacter::TestInputActionInstance);
-
-		EnhancedInputComponent->BindAction(TestTriggerQualifiersAction, ETriggerEvent::Triggered, this,
-		                                   &AGamedevUltimateCharacter::TestTriggerQualifiers);
-
+		// Module 1
 		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Started, this,
 		                                   &AGamedevUltimateCharacter::DoWalk);
 		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Completed, this,
@@ -236,118 +214,6 @@ void AGamedevUltimateCharacter::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
-}
-
-void AGamedevUltimateCharacter::TestStartedTriggerStates(const FInputActionValue& Value)
-{
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			1,
-			2.0f,
-			FColor::Green,
-			TEXT("TriggerStatesAction Started!")
-		);
-	}
-}
-
-void AGamedevUltimateCharacter::TestCompletedTriggerStates(const FInputActionValue& Value)
-{
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			2,
-			2.0f,
-			FColor::Green,
-			TEXT("TriggerStatesAction Completed!")
-		);
-	}
-}
-
-void AGamedevUltimateCharacter::TestTriggeredTriggerStates(const FInputActionInstance& Instance)
-{
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			3,
-			2.0f,
-			FColor::Green,
-			FString::Printf(TEXT("Triggered %f"), Instance.GetElapsedTime())
-		);
-	}
-}
-
-void AGamedevUltimateCharacter::TestOnGoingTriggerStates(const FInputActionInstance& Instance)
-{
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			4,
-			2.0f,
-			FColor::Green,
-			FString::Printf(TEXT("OnGoing %f"), Instance.GetElapsedTime())
-		);
-	}
-}
-
-void AGamedevUltimateCharacter::TestCancelledTriggerStates(const FInputActionValue& Value)
-{
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			5,
-			2.0f,
-			FColor::Green,
-			TEXT("TriggerStatesAction Cancelled!")
-		);
-	}
-}
-
-void AGamedevUltimateCharacter::TestRotate(const FInputActionValue& Value)
-{
-	if (GetController())
-	{
-		// pass the rotation inputs
-		AddControllerYawInput(Value.Get<float>());
-	}
-}
-
-void AGamedevUltimateCharacter::TestInputActionInstance(const FInputActionInstance& Instance)
-{
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			6,
-			2.0f,
-			FColor::Green,
-			FString::Printf(TEXT("Triggered: %f"), Instance.GetTriggeredTime())
-		);
-		GEngine->AddOnScreenDebugMessage(
-			7,
-			2.0f,
-			FColor::Green,
-			FString::Printf(TEXT("ElapsedTime: %f"), Instance.GetElapsedTime())
-		);
-		GEngine->AddOnScreenDebugMessage(
-			8,
-			2.0f,
-			FColor::Green,
-			FString::Printf(TEXT("Value %f"), Instance.GetValue().Get<float>())
-		);
-	}
-}
-
-void AGamedevUltimateCharacter::TestTriggerQualifiers(const FInputActionInstance& Instance)
-{
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			9,
-			2.0f,
-			FColor::Green,
-			FString::Printf(TEXT("Triggered: %f"), Instance.GetTriggeredTime())
-		);
-	}
 }
 
 void AGamedevUltimateCharacter::DoWalk(const FInputActionInstance& Instance)
