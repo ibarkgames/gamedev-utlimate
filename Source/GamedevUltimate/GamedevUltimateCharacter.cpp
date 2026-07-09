@@ -94,37 +94,39 @@ void AGamedevUltimateCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		EnhancedInputComponent->BindAction(TestTriggerQualifiersAction, ETriggerEvent::Triggered, this,
 		                                   &AGamedevUltimateCharacter::TestTriggerQualifiers);
 
-		EnhancedInputComponent->BindAction(Gu_MoveAction, ETriggerEvent::Triggered, this,
-		                                   &AGamedevUltimateCharacter::GuMove);
+		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Started, this,
+		                                   &AGamedevUltimateCharacter::DoWalk);
+		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Completed, this,
+		                                   &AGamedevUltimateCharacter::DoWalk);
+		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Canceled, this,
+		                                   &AGamedevUltimateCharacter::DoWalk);
 
 		EnhancedInputComponent->BindAction(Gu_SprintAction, ETriggerEvent::Started, this,
-		                                   &AGamedevUltimateCharacter::GuSprint);
+		                                   &AGamedevUltimateCharacter::DoSprint);
 		EnhancedInputComponent->BindAction(Gu_SprintAction, ETriggerEvent::Completed, this,
-		                                   &AGamedevUltimateCharacter::GuSprint);
+		                                   &AGamedevUltimateCharacter::DoSprint);
 		EnhancedInputComponent->BindAction(Gu_SprintAction, ETriggerEvent::Canceled, this,
-		                                   &AGamedevUltimateCharacter::GuSprint);
+		                                   &AGamedevUltimateCharacter::DoSprint);
 
-		EnhancedInputComponent->BindAction(Gu_ChargedJumpAction, ETriggerEvent::Triggered, this,
-		                                   &AGamedevUltimateCharacter::GuChargedJumpStart);
-		EnhancedInputComponent->BindAction(Gu_ChargedJumpAction, ETriggerEvent::Ongoing, this,
-		                                   &AGamedevUltimateCharacter::GuChargedJumpStart);
-		EnhancedInputComponent->BindAction(Gu_ChargedJumpAction, ETriggerEvent::Completed, this,
-		                                   &AGamedevUltimateCharacter::GuChargedJumpEnd);
+		EnhancedInputComponent->BindAction(ChargedJumpAction, ETriggerEvent::Triggered, this,
+		                                   &AGamedevUltimateCharacter::DoChargedJumpStart);
+		EnhancedInputComponent->BindAction(ChargedJumpAction, ETriggerEvent::Ongoing, this,
+		                                   &AGamedevUltimateCharacter::DoChargedJumpStart);
+		EnhancedInputComponent->BindAction(ChargedJumpAction, ETriggerEvent::Completed, this,
+		                                   &AGamedevUltimateCharacter::DoChargedJumpEnd);
 
-		EnhancedInputComponent->BindAction(Gu_CrouchAction, ETriggerEvent::Triggered, this,
-		                                   &AGamedevUltimateCharacter::GuCrouch);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this,
+		                                   &AGamedevUltimateCharacter::DoCrouch);
 
-		EnhancedInputComponent->BindAction(Gu_DashAction, ETriggerEvent::Triggered, this,
-		                                   &AGamedevUltimateCharacter::Gu_Dash);
-		EnhancedInputComponent->BindAction(Gu_DashAction, ETriggerEvent::Ongoing, this,
-										   &AGamedevUltimateCharacter::Gu_Dash);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this,
+		                                   &AGamedevUltimateCharacter::DoDash);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Ongoing, this,
+		                                   &AGamedevUltimateCharacter::DoDash);
 
-		EnhancedInputComponent->BindAction(Gu_FlyAction, ETriggerEvent::Started, this,
-		                                   &AGamedevUltimateCharacter::Gu_FlyStart);
-		EnhancedInputComponent->BindAction(Gu_FlyAction, ETriggerEvent::Completed, this,
-										   &AGamedevUltimateCharacter::Gu_FlyEnd);
-		EnhancedInputComponent->BindAction(Gu_FlyAction, ETriggerEvent::Canceled, this,
-										   &AGamedevUltimateCharacter::Gu_FlyEnd);
+		EnhancedInputComponent->BindAction(SwitchFlyingAction, ETriggerEvent::Triggered, this,
+		                                   &AGamedevUltimateCharacter::SwitchFlying);
+		EnhancedInputComponent->BindAction(AscendAction, ETriggerEvent::Triggered, this,
+		                                   &AGamedevUltimateCharacter::Ascending);
 	}
 	else
 	{
@@ -147,7 +149,7 @@ void AGamedevUltimateCharacter::BeginPlay()
 void AGamedevUltimateCharacter::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	if (
 		float CameraHeight = GetFirstPersonCameraComponent()->GetRelativeLocation().X;
 		!FMath::IsNearlyZero(CameraHeight - TargetCameraHeight, 0.01f)
@@ -174,11 +176,15 @@ void AGamedevUltimateCharacter::OnEndCrouch(float HalfHeightAdjust, float Scaled
 
 void AGamedevUltimateCharacter::MoveInput(const FInputActionValue& Value)
 {
-	// get the Vector2D move axis
 	FVector2D MovementVector = Value.Get<FVector2D>();
-
-	// pass the axis values to the move input
-	DoMove(MovementVector.X, MovementVector.Y);
+	if (GetMovementComponent()->IsFlying())
+	{
+		DoFly(MovementVector.X, MovementVector.Y);
+	}
+	else
+	{
+		DoMove(MovementVector.X, MovementVector.Y);
+	}
 }
 
 void AGamedevUltimateCharacter::LookInput(const FInputActionValue& Value)
@@ -344,20 +350,25 @@ void AGamedevUltimateCharacter::TestTriggerQualifiers(const FInputActionInstance
 	}
 }
 
-void AGamedevUltimateCharacter::GuMove(const FInputActionValue& Value)
+void AGamedevUltimateCharacter::DoWalk(const FInputActionInstance& Instance)
 {
-	const FVector2D Input = Value.Get<FVector2D>();
-	if (GetMovementComponent()->IsFlying())
+	if (Instance.GetTriggerEvent() == ETriggerEvent::Started)
 	{
-		DoFly(Input.X, Input.Y);
+		if (GetCharacterMovement()->IsFalling() || GetCharacterMovement()->IsCrouching())
+		{
+			return;
+		}
+		bIsWalking = true;
+		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 	}
 	else
 	{
-		DoMove(Input.X, Input.Y);
+		bIsWalking = false;
+		GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
 	}
 }
 
-void AGamedevUltimateCharacter::GuSprint(const FInputActionInstance& Instance)
+void AGamedevUltimateCharacter::DoSprint(const FInputActionInstance& Instance)
 {
 	if (Instance.GetTriggerEvent() == ETriggerEvent::Started)
 	{
@@ -375,7 +386,7 @@ void AGamedevUltimateCharacter::GuSprint(const FInputActionInstance& Instance)
 	}
 }
 
-void AGamedevUltimateCharacter::GuChargedJumpStart(const FInputActionInstance& Instance)
+void AGamedevUltimateCharacter::DoChargedJumpStart(const FInputActionInstance& Instance)
 {
 	if (Instance.GetTriggerEvent() == ETriggerEvent::Ongoing)
 	{
@@ -399,7 +410,7 @@ void AGamedevUltimateCharacter::GuChargedJumpStart(const FInputActionInstance& I
 	Jump();
 }
 
-void AGamedevUltimateCharacter::GuChargedJumpEnd(const FInputActionInstance& Instance)
+void AGamedevUltimateCharacter::DoChargedJumpEnd(const FInputActionInstance& Instance)
 {
 	if (bIsChargedJumping)
 	{
@@ -409,7 +420,7 @@ void AGamedevUltimateCharacter::GuChargedJumpEnd(const FInputActionInstance& Ins
 	StopJumping();
 }
 
-void AGamedevUltimateCharacter::GuCrouch(const FInputActionValue& Value)
+void AGamedevUltimateCharacter::DoCrouch(const FInputActionValue& Value)
 {
 	if (Value.Get<bool>())
 	{
@@ -425,7 +436,7 @@ void AGamedevUltimateCharacter::GuCrouch(const FInputActionValue& Value)
 	}
 }
 
-void AGamedevUltimateCharacter::Gu_Dash(const FInputActionInstance& Instance)
+void AGamedevUltimateCharacter::DoDash(const FInputActionInstance& Instance)
 {
 	if (bIsCrouched)
 	{
@@ -438,8 +449,8 @@ void AGamedevUltimateCharacter::Gu_Dash(const FInputActionInstance& Instance)
 			const UInputTriggerHoldAndRelease* Trigger = static_cast<UInputTriggerHoldAndRelease*>(Instance.
 				GetTriggers()[0]);
 			const FString Message = Trigger->HoldTimeThreshold > Instance.GetElapsedTime()
-										? FString::Printf(TEXT("Dash is charging: %f"), Instance.GetElapsedTime())
-										: TEXT("Ready to Dash");
+				                        ? FString::Printf(TEXT("Dash is charging: %f"), Instance.GetElapsedTime())
+				                        : TEXT("Ready to Dash");
 			GEngine->AddOnScreenDebugMessage(13, 2.0f, FColor::Green, Message);
 		}
 		return;
@@ -449,31 +460,31 @@ void AGamedevUltimateCharacter::Gu_Dash(const FInputActionInstance& Instance)
 	LaunchCharacter(DashVector, true, true);
 }
 
-void AGamedevUltimateCharacter::Gu_FlyStart(const FInputActionValue& Value)
+void AGamedevUltimateCharacter::SwitchFlying(const FInputActionValue& Value)
 {
-	if (GetCharacterMovement()->IsFalling() || GetCharacterMovement()->IsFlying() || bIsChargedJumping)
+	if (GetCharacterMovement()->IsFlying())
 	{
-		return;
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	}
-	
-	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-	
-	FVector FlyLaunchVector = GetActorForwardVector();
-	FlyLaunchVector.Z += FlyStartElevationVelocity;
-	GetCharacterMovement()->Velocity = FlyLaunchVector;
+	else
+	{
+		if (GetCharacterMovement()->IsFalling() || bIsChargedJumping)
+		{
+			return;
+		}
+
+		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+
+		FVector FlyLaunchVector = GetActorForwardVector();
+		FlyLaunchVector.Z += FlyStartElevationVelocity;
+		GetCharacterMovement()->Velocity = FlyLaunchVector;
+	}
 }
 
-void AGamedevUltimateCharacter::Gu_FlyEnd(const FInputActionValue& Value)
+void AGamedevUltimateCharacter::Ascending(const FInputActionValue& Value)
 {
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	
-	if (GEngine)
+	if (GetCharacterMovement()->IsFlying())
 	{
-		GEngine->AddOnScreenDebugMessage(
-			15,
-			2.0f,
-			FColor::Green,
-			FString::Printf(TEXT("Fly end"))
-		);
+		AddMovementInput(GetActorUpVector(), Value.Get<float>());
 	}
 }

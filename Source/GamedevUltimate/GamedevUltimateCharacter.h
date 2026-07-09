@@ -65,22 +65,25 @@ protected:
 	
 	/** Module 1 Movement Abilities */
 	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* Gu_MoveAction;
+	UInputAction* WalkAction;
 	
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* Gu_SprintAction;
 	
 	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* Gu_ChargedJumpAction;
+	UInputAction* ChargedJumpAction;
 	
 	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* Gu_CrouchAction;
+	UInputAction* CrouchAction;
 	
 	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* Gu_DashAction;
+	UInputAction* DashAction;
 	
 	UPROPERTY(EditAnywhere, Category ="Input")
-	UInputAction* Gu_FlyAction;
+	UInputAction* SwitchFlyingAction;
+	
+	UPROPERTY(EditAnywhere, Category ="Input")
+	UInputAction* AscendAction;
 	
 public:
 	AGamedevUltimateCharacter();
@@ -127,21 +130,21 @@ protected:
 	
 	void TestTriggerQualifiers(const FInputActionInstance& Instance);
 	
-	void GuMove(const FInputActionValue& Value);
+	void DoWalk(const FInputActionInstance& Instance);
 	
-	void GuSprint(const FInputActionInstance& Instance);
+	void DoSprint(const FInputActionInstance& Instance);
 	
-	void GuChargedJumpStart(const FInputActionInstance& Instance);
+	void DoChargedJumpStart(const FInputActionInstance& Instance);
 	
-	void GuChargedJumpEnd(const FInputActionInstance& Instance);
+	void DoChargedJumpEnd(const FInputActionInstance& Instance);
 	
-	void GuCrouch(const FInputActionValue& Value);
+	void DoCrouch(const FInputActionValue& Value);
 	
-	void Gu_Dash(const FInputActionInstance& Instance);
+	void DoDash(const FInputActionInstance& Instance);
 	
-	void Gu_FlyStart(const FInputActionValue& Value);
+	void SwitchFlying(const FInputActionValue& Value);
 	
-	void Gu_FlyEnd(const FInputActionValue& Value);
+	void Ascending(const FInputActionValue& Value);
 	
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -164,6 +167,12 @@ public:
 
 	
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float WalkingSpeed{200.f};
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	bool bIsWalking{false};
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	float RunningSpeed{400.f};
 	
