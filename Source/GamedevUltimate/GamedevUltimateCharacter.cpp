@@ -228,7 +228,7 @@ void AGamedevUltimateCharacter::DoFly(const float Right, const float Forward)
 void AGamedevUltimateCharacter::DoJumpStart()
 {
 	
-	if (CurrentStamina > JumpStaminaConsumption)
+	if (CurrentStamina >= JumpStaminaConsumption)
 	{
 		ConsumeStamina(JumpStaminaConsumption);
 		Jump();
