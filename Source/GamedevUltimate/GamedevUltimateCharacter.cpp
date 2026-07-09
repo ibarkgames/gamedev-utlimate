@@ -140,8 +140,7 @@ void AGamedevUltimateCharacter::Tick(const float DeltaTime)
 	}
 	if (StaminaRechargeDelay > 0.f)
 	{
-		StaminaRechargeDelay -= DeltaTime;
-		StaminaRechargeDelay = FMath::Clamp(StaminaRechargeDelay, 0.f, StaminaRechargeDelay);
+		StaminaRechargeDelay = FMath::Clamp(StaminaRechargeDelay - DeltaTime, 0.f, MaxStaminaRechargeDelay);
 	}
 	
 	if (CurrentStamina < MaxStamina && !bIsSprinting && StaminaRechargeDelay == 0.f)
