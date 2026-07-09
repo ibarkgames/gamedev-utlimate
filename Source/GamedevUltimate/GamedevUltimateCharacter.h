@@ -105,6 +105,8 @@ protected:
 	
 	void DoSprint(const FInputActionInstance& Instance);
 	
+	void StopSprint();
+	
 	void DoChargedJumpStart(const FInputActionInstance& Instance);
 	
 	void DoChargedJumpEnd(const FInputActionInstance& Instance);
@@ -117,6 +119,8 @@ protected:
 	
 	void Ascending(const FInputActionValue& Value);
 	
+	void ConsumeStamina(const float Consumption);
+	
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
@@ -127,7 +131,6 @@ protected:
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
-
 	
 public:
 	/** Returns the first person mesh **/
@@ -182,4 +185,31 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	float FlyStartElevationVelocity{50.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components|Stamina", meta = (AllowPrivateAccess = "true"))
+	float MaxStamina{100.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components|Stamina", meta = (AllowPrivateAccess = "true"))
+	float CurrentStamina{100.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components|Stamina", meta = (AllowPrivateAccess = "true"))
+	float StaminaRechargeRate{5.0f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components|Stamina", meta = (AllowPrivateAccess = "true"))
+	float MaxStaminaRechargeDelay{5.0f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components|Stamina", meta = (AllowPrivateAccess = "true"))
+	float StaminaRechargeDelay{5.0f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float  SprintStaminaConsumption{0.2f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float  JumpStaminaConsumption{10.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float  ChargedJumpStaminaConsumption{20.f};
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	float  DashStaminaConsumption{20.f};
 };

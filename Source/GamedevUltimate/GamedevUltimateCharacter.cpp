@@ -138,15 +138,37 @@ void AGamedevUltimateCharacter::Tick(const float DeltaTime)
 		CameraLocation.X = CameraHeight;
 		GetFirstPersonCameraComponent()->SetRelativeLocation(CameraLocation);
 	}
+	if (StaminaRechargeDelay > 0.f)
+	{
+		StaminaRechargeDelay -= DeltaTime;
+		StaminaRechargeDelay = FMath::Clamp(StaminaRechargeDelay, 0.f, StaminaRechargeDelay);
+	}
+	
+	if (CurrentStamina < MaxStamina && !bIsSprinting && StaminaRechargeDelay == 0.f)
+	{
+		CurrentStamina += DeltaTime * StaminaRechargeRate;
+		CurrentStamina = FMath::Clamp(CurrentStamina, 0, MaxStamina);
+		if (GEngine)
+		{
+			if (StaminaRechargeDelay > 0.f)
+			{
+				GEngine->AddOnScreenDebugMessage(15, 2.0f, FColor::Red, FString::Printf(TEXT("Stamina is not charging for: %f"), StaminaRechargeDelay));
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(15, 2.0f, FColor::Green, FString::Printf(TEXT("Current Stamina: %f"), CurrentStamina));
+			}
+		}
+	}
 }
 
-void AGamedevUltimateCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+void AGamedevUltimateCharacter::OnStartCrouch(const float HalfHeightAdjust, const float ScaledHalfHeightAdjust)
 {
 	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
 	TargetCameraHeight -= CameraCrouchOffset;
 }
 
-void AGamedevUltimateCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+void AGamedevUltimateCharacter::OnEndCrouch(const float HalfHeightAdjust, const float ScaledHalfHeightAdjust)
 {
 	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
 	TargetCameraHeight = DefaultCameraHeight;
@@ -167,14 +189,11 @@ void AGamedevUltimateCharacter::MoveInput(const FInputActionValue& Value)
 
 void AGamedevUltimateCharacter::LookInput(const FInputActionValue& Value)
 {
-	// get the Vector2D look axis
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	// pass the axis values to the aim input
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 	DoAim(LookAxisVector.X, LookAxisVector.Y);
 }
 
-void AGamedevUltimateCharacter::DoAim(float Yaw, float Pitch)
+void AGamedevUltimateCharacter::DoAim(const float Yaw, const float Pitch)
 {
 	if (GetController())
 	{
@@ -188,7 +207,15 @@ void AGamedevUltimateCharacter::DoMove(const float Right, const float Forward)
 {
 	if (GetController())
 	{
-		// pass the move inputs
+		if (bIsSprinting && CurrentStamina > SprintStaminaConsumption)
+		{
+			ConsumeStamina(SprintStaminaConsumption);
+		}
+		else if (bIsSprinting)
+		{
+			ConsumeStamina(SprintStaminaConsumption);
+			StopSprint();
+		}
 		AddMovementInput(GetActorRightVector(), Right);
 		AddMovementInput(GetActorForwardVector(), Forward);
 	}
@@ -198,7 +225,6 @@ void AGamedevUltimateCharacter::DoFly(const float Right, const float Forward)
 {
 	if (GetController())
 	{
-		// pass the move inputs
 		AddMovementInput(GetFirstPersonCameraComponent()->GetRightVector(), Right);
 		AddMovementInput(GetFirstPersonCameraComponent()->GetForwardVector(), Forward);
 	}
@@ -206,13 +232,16 @@ void AGamedevUltimateCharacter::DoFly(const float Right, const float Forward)
 
 void AGamedevUltimateCharacter::DoJumpStart()
 {
-	// pass Jump to the character
-	Jump();
+	
+	if (CurrentStamina > JumpStaminaConsumption)
+	{
+		ConsumeStamina(JumpStaminaConsumption);
+		Jump();
+	}
 }
 
 void AGamedevUltimateCharacter::DoJumpEnd()
 {
-	// pass StopJumping to the character
 	StopJumping();
 }
 
@@ -247,9 +276,14 @@ void AGamedevUltimateCharacter::DoSprint(const FInputActionInstance& Instance)
 	}
 	else
 	{
-		bIsSprinting = false;
-		GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
+		StopSprint();
 	}
+}
+
+void AGamedevUltimateCharacter::StopSprint()
+{
+	bIsSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
 }
 
 void AGamedevUltimateCharacter::DoChargedJumpStart(const FInputActionInstance& Instance)
@@ -267,13 +301,14 @@ void AGamedevUltimateCharacter::DoChargedJumpStart(const FInputActionInstance& I
 		}
 		return;
 	}
-
-	if (!bIsChargedJumping)
+	
+	if (!bIsChargedJumping && CurrentStamina > ChargedJumpStaminaConsumption)
 	{
+		ConsumeStamina(ChargedJumpStaminaConsumption);
 		bIsChargedJumping = true;
 		GetCharacterMovement()->JumpZVelocity = ChargedJumpZVelocity;
+		Jump();
 	}
-	Jump();
 }
 
 void AGamedevUltimateCharacter::DoChargedJumpEnd(const FInputActionInstance& Instance)
@@ -304,7 +339,7 @@ void AGamedevUltimateCharacter::DoCrouch(const FInputActionValue& Value)
 
 void AGamedevUltimateCharacter::DoDash(const FInputActionInstance& Instance)
 {
-	if (bIsCrouched)
+	if (bIsCrouched || CurrentStamina < DashStaminaConsumption)
 	{
 		return;
 	}
@@ -321,6 +356,7 @@ void AGamedevUltimateCharacter::DoDash(const FInputActionInstance& Instance)
 		}
 		return;
 	}
+	ConsumeStamina(DashStaminaConsumption);
 	FVector DashVector = GetActorForwardVector() * DashDirectionalVelocity;
 	DashVector.Z += DashElevationVelocity;
 	LaunchCharacter(DashVector, true, true);
@@ -353,4 +389,11 @@ void AGamedevUltimateCharacter::Ascending(const FInputActionValue& Value)
 	{
 		AddMovementInput(GetActorUpVector(), Value.Get<float>());
 	}
+}
+
+void AGamedevUltimateCharacter::ConsumeStamina(const float Consumption)
+{
+	CurrentStamina -= Consumption;
+	StaminaRechargeDelay = MaxStaminaRechargeDelay;
+	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MaxStamina);
 }
