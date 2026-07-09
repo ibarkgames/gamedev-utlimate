@@ -147,17 +147,13 @@ void AGamedevUltimateCharacter::Tick(const float DeltaTime)
 	{
 		CurrentStamina += DeltaTime * StaminaRechargeRate;
 		CurrentStamina = FMath::Clamp(CurrentStamina, 0, MaxStamina);
+#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 		if (GEngine)
 		{
-			if (StaminaRechargeDelay > 0.f)
-			{
-				GEngine->AddOnScreenDebugMessage(15, 2.0f, FColor::Red, FString::Printf(TEXT("Stamina is not charging for: %f"), StaminaRechargeDelay));
-			}
-			else
-			{
-				GEngine->AddOnScreenDebugMessage(15, 2.0f, FColor::Green, FString::Printf(TEXT("Current Stamina: %f"), CurrentStamina));
-			}
+			GEngine->AddOnScreenDebugMessage(15, 2.0f, FColor::Green,
+			                                FString::Printf(TEXT("Current Stamina: %f"), CurrentStamina));
 		}
+#endif
 	}
 }
 
