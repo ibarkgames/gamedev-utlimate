@@ -31,13 +31,5 @@ void ASineWaveMovementActor::Tick(const float DeltaTime)
 	const float Alpha = (FMath::Sin(Time) + 1.f) * 0.5f;
 	const FVector NewLocation = FMath::Lerp(Start, End, Alpha);
 	SetActorLocation(NewLocation);
-	
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(21, 2.0f, FColor::Green,
-										 FString::Printf(TEXT("Actor Location: %s, Time: %f, Sin: %f, Alpha: %f"), 
-											 *NewLocation.ToString(), Time, FMath::Sin(Time), Alpha)
-											 );
-	}
 }
 
