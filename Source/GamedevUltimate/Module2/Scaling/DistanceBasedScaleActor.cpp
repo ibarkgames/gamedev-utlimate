@@ -1,0 +1,68 @@
+﻿// Copyright iBarkGames
+
+
+#include "DistanceBasedScaleActor.h"
+
+#include "Components/StaticMeshComponent.h"
+#include "Engine/Engine.h"
+
+
+ADistanceBasedScaleActor::ADistanceBasedScaleActor()
+{
+	PrimaryActorTick.bCanEverTick = true;
+	
+	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>("Root");
+	SetRootComponent(SceneComponent);
+	
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	StaticMeshComponent->SetupAttachment(RootComponent);
+}
+
+void ADistanceBasedScaleActor::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	StartLocation = GetActorLocation();
+	StartScale = GetActorScale3D();
+}
+
+void ADistanceBasedScaleActor::Tick(const float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	
+	FVector NewLocation = GetActorLocation();
+	FVector MovementDirection = EndLocation - StartLocation;
+	MovementDirection.Normalize();
+	
+	if (bIsReturning)
+	{
+		NewLocation -= MovementDirection * DeltaTime * MovingSpeed;
+		if ((EndLocation - NewLocation).Length() >= (EndLocation - StartLocation).Length())
+		{
+			bIsReturning = false;
+		}
+	}
+	else
+	{
+		NewLocation += MovementDirection * DeltaTime * MovingSpeed;
+		if ((NewLocation - StartLocation).Length() >= (EndLocation - StartLocation).Length())
+		{
+			bIsReturning = true;
+		}
+	}
+
+	const float Distance = (NewLocation - StartLocation).Length();
+	const float MaxDistance = (EndLocation - StartLocation).Length();
+	const FVector NewScale = StartScale * Distance / MaxDistance;
+	
+	SetActorLocation(NewLocation);
+	SetActorScale3D(NewScale);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(21, 2.0f, FColor::Green,
+										 FString::Printf(TEXT("Actor Location: %s, Scale: %s, DeltaTime: %f Distance: %f, MaxDistance: %f"), 
+											 *NewLocation.ToString(), *NewScale.ToString(), DeltaTime, Distance, MaxDistance)
+											 );
+	}
+}
+

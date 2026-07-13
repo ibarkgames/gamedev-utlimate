@@ -1,14 +1,13 @@
 ﻿// Copyright iBarkGames
 
 
-#include "SineWaveRotationActor.h"
+#include "SineWaveScaleActor.h"
 
+#include "PrimitiveSceneProxy.h"
 #include "Components/StaticMeshComponent.h"
-#include "Engine/Engine.h"
 
 
-// Sets default values
-ASineWaveRotationActor::ASineWaveRotationActor()
+ASineWaveScaleActor::ASineWaveScaleActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
@@ -19,20 +18,18 @@ ASineWaveRotationActor::ASineWaveRotationActor()
 	StaticMeshComponent->SetupAttachment(RootComponent);
 }
 
-void ASineWaveRotationActor::BeginPlay()
+void ASineWaveScaleActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	Start = GetActorRotation();
 }
 
-void ASineWaveRotationActor::Tick(const float DeltaTime)
+void ASineWaveScaleActor::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
 	Time += DeltaTime;
-	const float Alpha = FMath::Sin(Time);
-	const FRotator NewRotation = FMath::Lerp(Start, End, Alpha);
-	SetActorRotation(NewRotation);
+	const float Alpha = (FMath::Sin(Time) + 1.f) * 0.5f;
+	const FVector NewScale = FMath::Lerp(MinScale, MaxScale, Alpha);
+	SetActorScale3D(NewScale);
 }
 
