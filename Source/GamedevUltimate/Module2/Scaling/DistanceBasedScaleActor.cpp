@@ -57,12 +57,5 @@ void ADistanceBasedScaleActor::Tick(const float DeltaTime)
 	
 	SetActorLocation(NewLocation);
 	SetActorScale3D(NewScale);
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(21, 2.0f, FColor::Green,
-										 FString::Printf(TEXT("Actor Location: %s, Scale: %s, DeltaTime: %f Distance: %f, MaxDistance: %f"), 
-											 *NewLocation.ToString(), *NewScale.ToString(), DeltaTime, Distance, MaxDistance)
-											 );
-	}
 }
 

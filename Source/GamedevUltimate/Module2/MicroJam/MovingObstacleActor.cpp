@@ -84,13 +84,6 @@ FVector AMovingObstacleActor::CalculateBasicMovement(const float DeltaTime)
 	const FVector TargetLocation = Targets[NextTargetIndex]->GetActorLocation();
 	if (NewLocation.Equals(TargetLocation, 25.f) && !bWaiting)
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(25, 0.5f, FColor::Green,
-											 FString::Printf(TEXT("Set waiting. Actor location: %s"), 
-												 *NewLocation.ToString())
-												 );
-		}
 		bWaiting = true;
 		NextTargetIndex = (NextTargetIndex + 1) % Targets.Num();
 		GetWorldTimerManager().SetTimer(
@@ -110,10 +103,6 @@ FVector AMovingObstacleActor::CalculateBasicMovement(const float DeltaTime)
 		FVector Direction = TargetLocation - NewLocation;
 		Direction.Normalize();
 		NewLocation += Direction * MovingSpeed * DeltaTime;
-		GEngine->AddOnScreenDebugMessage(26, 0.5f, FColor::Green,
-											 FString::Printf(TEXT("Moving. Actor location: %s"), 
-												 *NewLocation.ToString())
-												 );
 	}
 	
 	return NewLocation;
