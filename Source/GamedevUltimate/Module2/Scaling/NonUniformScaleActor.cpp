@@ -41,8 +41,8 @@ void ANonUniformScaleActor::Tick(const float DeltaTime)
 	else
 	{
 		NewScale.X = FMath::FInterpConstantTo(NewScale.X, MaxScale.X, DeltaTime, ScaleSpeed.X);
-		NewScale.Y = FMath::FInterpConstantTo(NewScale.X, MaxScale.X, DeltaTime, ScaleSpeed.X);
-		NewScale.Z = FMath::FInterpConstantTo(NewScale.X, MaxScale.X, DeltaTime, ScaleSpeed.X);
+		NewScale.Y = FMath::FInterpConstantTo(NewScale.Y, MaxScale.Y, DeltaTime, ScaleSpeed.Y);
+		NewScale.Z = FMath::FInterpConstantTo(NewScale.Z, MaxScale.Z, DeltaTime, ScaleSpeed.Z);
 	}
 	
 	SetActorScale3D(NewScale);

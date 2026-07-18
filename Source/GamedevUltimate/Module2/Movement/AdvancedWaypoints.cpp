@@ -35,6 +35,7 @@ void AAdvancedWaypoints::Tick(const float DeltaTime)
 	if (WayPoints.Num() == 1)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Not enough WayPoints were set"));
+		return;
 	}
 	
 	FVector NewLocation = GetActorLocation();

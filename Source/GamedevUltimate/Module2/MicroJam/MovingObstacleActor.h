@@ -38,7 +38,7 @@ private:
 	TArray<AActor*> Targets;
 	
 	UPROPERTY(VisibleAnywhere, Category= MovingObstacleActor, meta = (AllowPrivateAccess = true))
-	int NextTargetIndex{1};
+	int NextTargetIndex{0};
 	
 	UPROPERTY(VisibleAnywhere, Category= MovingObstacleActor, meta = (AllowPrivateAccess = true))
 	FTimerHandle TimerHandle;

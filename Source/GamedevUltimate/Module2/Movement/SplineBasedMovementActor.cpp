@@ -30,6 +30,11 @@ void ASplineBasedMovementActor::BeginPlay()
 	}
 
 	SplineComponent = SplineActor->FindComponentByClass<USplineComponent>();
+	if (SplineComponent == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SplineBasedMovementActor::BeginPlay() SplineActor has no USplineComponent"));
+		return;
+	}
 	SplineLength = SplineComponent->GetSplineLength();
 }
 

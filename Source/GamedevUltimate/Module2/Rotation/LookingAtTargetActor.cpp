@@ -41,11 +41,8 @@ void ALookingAtTargetActor::Tick(const float DeltaTime)
 	const FQuat Quat = GetActorQuat();
 	const FQuat TargetQuat = 
 		UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetActor->GetActorLocation()).Quaternion();
-	const double X = FMath::FInterpTo(Quat.X, TargetQuat.X, DeltaTime, RotationSpeed);
-	const double Y = FMath::FInterpTo(Quat.Y, TargetQuat.Y, DeltaTime, RotationSpeed);
-	const double Z = FMath::FInterpTo(Quat.Z, TargetQuat.Z, DeltaTime, RotationSpeed);
-	const double W = FMath::FInterpTo(Quat.W, TargetQuat.W, DeltaTime, RotationSpeed);
+	const FQuat NewQuat = FMath::QInterpTo(Quat, TargetQuat, DeltaTime, RotationSpeed).GetNormalized();
 	
-	SetActorRotation(FQuat{X, Y, Z, W});
+	SetActorRotation(NewQuat);
 }
 

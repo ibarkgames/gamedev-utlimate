@@ -111,10 +111,19 @@ void ARotatingScytheActor::Descend(const float DeltaTime)
 
 void ARotatingScytheActor::Move(const float DeltaTime)
 {
+	if (!IsValid(SpeedCurve) || !IsValid(RotationSpeedCurve))
+	{
+		return;
+	}
+	const float CurveDuration = SpeedCurve->FloatCurve.GetLastKey().Time;
+	if (SpeedCurve->FloatCurve.GetNumKeys() == 0 || CurveDuration <= 0.f)
+	{
+		return;
+	}
+
 	Time +=	DeltaTime;
 	RotationTime += DeltaTime;
 	
-	const float CurveDuration = SpeedCurve->FloatCurve.GetLastKey().Time;
 	const float ClampedTime = FMath::Clamp(Time, 0.f, CurveDuration);
 	const float Alpha = SpeedCurve->GetFloatValue(ClampedTime); // curve now represents 0..1 alpha, not raw speed
 

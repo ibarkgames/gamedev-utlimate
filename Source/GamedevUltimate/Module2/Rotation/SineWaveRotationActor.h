@@ -30,5 +30,5 @@ private:
 	UPROPERTY(EditAnywhere, Category="Components", meta=(AllowPrivateAccess="true"))
 	FRotator End;
 	
-	float Time;
+	float Time{0.f};
 };

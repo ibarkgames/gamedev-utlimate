@@ -40,8 +40,9 @@ void ADistanceBasedMovement::Tick(const float DeltaTime)
 	if ((!bIsReturning && Distance > MaxDistance) || (bIsReturning && Distance - DistanceThreshold < 0.f))
 	{
 		bIsReturning = !bIsReturning;
-		const FRotator Rotation = MovingDirection->GetComponentRotation() * -1;
-		MovingDirection->SetRelativeRotation(Rotation);
+		FRotator RelativeRotation = MovingDirection->GetRelativeRotation();
+		RelativeRotation.Yaw += 180.f;
+		MovingDirection->SetRelativeRotation(RelativeRotation);
 	} 
 	SetActorLocation(NewLocation);
 }

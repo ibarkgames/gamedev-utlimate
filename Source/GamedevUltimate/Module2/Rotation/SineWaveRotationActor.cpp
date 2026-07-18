@@ -31,7 +31,7 @@ void ASineWaveRotationActor::Tick(const float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	Time += DeltaTime;
-	const float Alpha = FMath::Sin(Time);
+	const float Alpha = (FMath::Sin(Time) + 1.f) / 2.f;
 	const FRotator NewRotation = FMath::Lerp(Start, End, Alpha);
 	SetActorRotation(NewRotation);
 }

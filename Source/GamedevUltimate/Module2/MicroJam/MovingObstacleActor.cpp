@@ -52,7 +52,7 @@ void AMovingObstacleActor::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (Targets.Num() < 1 || !IsValid(SpeedCurve))
+	if (Targets.Num() < 2 || !IsValid(SpeedCurve))
 	{
 		return;
 	}
@@ -73,7 +73,7 @@ void AMovingObstacleActor::Tick(const float DeltaTime)
 	const float YawRadians = FMath::DegreesToRadians(NewRotation.Yaw);
 	const float Alpha = (1.f + FMath::Cos(2.f * YawRadians)) / 2.f;
 	
-	const float NewScaleComponent = FMath::Lerp(MinScale, MaxScale, (Alpha + 1.f) / 2.f);
+	const float NewScaleComponent = FMath::Lerp(MinScale, MaxScale, Alpha);
 	const FVector NewScale = BaseArrowsScale * FVector{NewScaleComponent, NewScaleComponent, 1.f};
 	Arrows->SetRelativeScale3D(NewScale);
 }

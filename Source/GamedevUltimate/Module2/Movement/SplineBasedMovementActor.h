@@ -33,7 +33,7 @@ private:
 	float Speed{100.f};
 	
 	UPROPERTY(VisibleAnywhere, Category="Components", meta=(AllowPrivateAccess="true"))
-	TSoftObjectPtr<USplineComponent> SplineComponent;
+	TObjectPtr<USplineComponent> SplineComponent;
 	
 	float SplineLength{0.f};
 	

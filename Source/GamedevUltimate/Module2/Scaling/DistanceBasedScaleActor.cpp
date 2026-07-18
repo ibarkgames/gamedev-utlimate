@@ -53,9 +53,12 @@ void ADistanceBasedScaleActor::Tick(const float DeltaTime)
 
 	const float Distance = (NewLocation - StartLocation).Length();
 	const float MaxDistance = (EndLocation - StartLocation).Length();
-	const FVector NewScale = StartScale * Distance / MaxDistance;
+	if (MaxDistance > 0.f)
+	{
+		const FVector NewScale = StartScale * Distance / MaxDistance;
+		SetActorScale3D(NewScale);
+	}
 	
 	SetActorLocation(NewLocation);
-	SetActorScale3D(NewScale);
 }
 

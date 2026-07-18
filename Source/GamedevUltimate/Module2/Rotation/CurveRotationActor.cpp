@@ -39,6 +39,10 @@ void ACurveRotationActor::Tick(const float DeltaTime)
 	}
 	
 	const FRichCurveKey LastKey = SpeedCurve->FloatCurve.GetLastKey();
+	if (SpeedCurve->FloatCurve.GetNumKeys() == 0 || LastKey.Time <= 0.f)
+	{
+		return;
+	}
 	TimeInCurve = FMath::Fmod(DeltaTime + TimeInCurve, LastKey.Time);
 	const float RotationSpeed = SpeedCurve->GetFloatValue(TimeInCurve);
 	

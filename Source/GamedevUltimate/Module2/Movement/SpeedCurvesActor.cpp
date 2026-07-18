@@ -5,8 +5,7 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Curves/CurveFloat.h"
-#include "Engine/Engine.h"
-#include "UObject/ConstructorHelpers.h"
+#include "Curves/RichCurve.h"
 
 
 ASpeedCurvesActor::ASpeedCurvesActor()
@@ -39,13 +38,17 @@ void ASpeedCurvesActor::Tick(const float DeltaTime)
 	}
 	
 	const FRichCurveKey LastKey = SpeedCurve->FloatCurve.GetLastKey();
+	if (SpeedCurve->FloatCurve.GetNumKeys() == 0 || LastKey.Time <= 0.f)
+	{
+		return;
+	}
 	TimeInCurve = FMath::Fmod(DeltaTime + TimeInCurve, LastKey.Time);
 	const float Speed = SpeedCurve->GetFloatValue(TimeInCurve);
 	
 	FVector NewLocation = GetActorLocation();
 	if (bIsReturning)
 	{
-		NewLocation = FMath::VInterpConstantTo(NewLocation, Start, Speed, DeltaTime);
+		NewLocation = FMath::VInterpConstantTo(NewLocation, Start, DeltaTime, Speed);
 		if (NewLocation.Equals(Start))
 		{
 			bIsReturning = false;
@@ -53,7 +56,7 @@ void ASpeedCurvesActor::Tick(const float DeltaTime)
 	}
 	else
 	{
-		NewLocation = FMath::VInterpConstantTo(NewLocation, End, Speed, DeltaTime);
+		NewLocation = FMath::VInterpConstantTo(NewLocation, End, DeltaTime, Speed);
 		if (NewLocation.Equals(End))
 		{
 			bIsReturning = true;

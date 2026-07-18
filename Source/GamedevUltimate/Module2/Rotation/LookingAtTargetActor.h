@@ -28,7 +28,5 @@ private:
 	TSoftObjectPtr<AActor> TargetActor;
 	
 	UPROPERTY(EditAnywhere, Category="Components", meta=(AllowPrivateAccess="true"))
-	float RotationSpeed;
-	
-	float Time;
+	float RotationSpeed{5.f};
 };
