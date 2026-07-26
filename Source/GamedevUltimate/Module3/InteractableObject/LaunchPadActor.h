@@ -32,13 +32,13 @@ private:
 		const FHitResult& Hit
 	);
 
-	UPROPERTY(EditDefaultsOnly, Blueprintable, Category=LaunchPadActor, meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=LaunchPadActor, meta=(AllowPrivateAccess=true))
 	TObjectPtr<UStaticMeshComponent> Mesh;
 	
-	UPROPERTY(EditDefaultsOnly, Blueprintable, Category=LaunchPadActor, meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=LaunchPadActor, meta=(AllowPrivateAccess=true))
 	TObjectPtr<UBoxComponent> BoxComponent;
 	
-	UPROPERTY(EditAnywhere, Blueprintable, Category=LaunchPadActor, meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=LaunchPadActor, meta=(AllowPrivateAccess=true))
 	float LaunchVelocityMagnitude{1000.f};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=KillZoneActo, meta=(AllowPrivateAccess=true))

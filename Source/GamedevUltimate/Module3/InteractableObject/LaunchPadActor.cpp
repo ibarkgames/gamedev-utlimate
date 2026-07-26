@@ -65,7 +65,9 @@ void ALaunchPadActor::OnHit(
 		if (bDebug) UE_LOG(
 			LogGamedevUltimate, 
 			Log, 
-			TEXT("LaunchPad unexpected hit actor: %s component: %s"), *Character->GetName(), *OtherComp->GetName()
+			TEXT("LaunchPad unexpected hit actor: %s component: %s"),
+			OtherActor ? *OtherActor->GetName() : TEXT("None"),
+			OtherComp ? *OtherComp->GetName() : TEXT("None")
 		);
 	}
 }

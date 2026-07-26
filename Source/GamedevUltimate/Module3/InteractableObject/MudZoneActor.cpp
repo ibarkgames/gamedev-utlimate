@@ -44,10 +44,13 @@ void AMudZoneActor::OnBeginOverlap(
 {
 	if (ACharacter* Character = Cast<ACharacter>(OtherActor))
 	{
-		if (bDebug) UE_LOG(LogGamedevUltimate, Log, TEXT("OnBeginOverlap %s"), *Character->GetName());
-		Character->GetCharacterMovement()->MaxWalkSpeed /= SlowingFactor;
-		Character->GetCharacterMovement()->MaxWalkSpeedCrouched /= SlowingFactor;
-		OverlappingCharacters.AddUnique(Character);
+		if (!OverlappingCharacters.Contains(Character))
+		{
+			if (bDebug) UE_LOG(LogGamedevUltimate, Log, TEXT("OnBeginOverlap %s"), *Character->GetName());
+			Character->GetCharacterMovement()->MaxWalkSpeed /= SlowingFactor;
+			Character->GetCharacterMovement()->MaxWalkSpeedCrouched /= SlowingFactor;
+			OverlappingCharacters.Add(Character);
+		}
 	}
 }
 

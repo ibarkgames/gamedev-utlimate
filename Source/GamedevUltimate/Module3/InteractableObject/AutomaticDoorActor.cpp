@@ -40,8 +40,11 @@ void AAutomaticDoorActor::BeginPlay()
 	
 	float MinTime{0.f};
 	float MaxTime{0.f};
-	SpeedCurve->GetTimeRange(MinTime, MaxTime);
-	SpeedCurveLength = MaxTime - MinTime;
+	if (SpeedCurve)
+	{
+		SpeedCurve->GetTimeRange(MinTime, MaxTime);
+		SpeedCurveLength = MaxTime - MinTime;
+	}
 }
 
 void AAutomaticDoorActor::Tick(const float DeltaTime)
@@ -129,7 +132,6 @@ void AAutomaticDoorActor::CalculateNextDoorLocation(
 )
 {
 	Time += DeltaTime;
-	const float Speed = SpeedCurve->GetFloatValue(Time);
+	const float Speed = SpeedCurve ? SpeedCurve->GetFloatValue(Time) : 0.f;
 	NewLocation = FMath::VInterpConstantTo(NewLocation, TargetLocation, DeltaTime, Speed);
 }
-

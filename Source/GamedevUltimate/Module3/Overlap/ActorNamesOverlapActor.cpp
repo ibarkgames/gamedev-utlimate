@@ -43,7 +43,6 @@ void AActorNamesOverlapActor::LogOverlappingActors() const
 	BoxComponent->GetOverlappingActors(OverlappingActors);
 	for (const AActor* Actor : OverlappingActors)
 	{
-		UE_LOG(LogGamedevUltimate, Log, TEXT("Overlapping Actor: %s"), *Actor->GetName())
+		UE_LOG(LogGamedevUltimate, Log, TEXT("Overlapping Actor: %s"), *Actor->GetName());
 	}
 }
-

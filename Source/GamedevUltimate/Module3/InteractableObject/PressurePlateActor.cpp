@@ -48,7 +48,7 @@ void APressurePlateActor::Tick(const float DeltaTime)
 		DeltaZ -= DeltaTime * TravelingSpeed;
 	}
 	
-	if (DeltaTime != 0.f)
+	if (DeltaZ != 0.f)
 	{
 		NextLocation.Z += DeltaZ;
 		SetActorLocation(NextLocation);

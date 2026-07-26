@@ -48,7 +48,7 @@ void AOverlapPlayerActor::OnComponentBeginOverlap(
 	{
 		if (const AGamedevUltimateCharacter* Player = Cast<AGamedevUltimateCharacter>(OtherActor); Player)
 		{
-			if (bDebug) UE_LOG(LogGamedevUltimate, Log, TEXT("Hello %s!"), *Player->GetName())
+			if (bDebug) UE_LOG(LogGamedevUltimate, Log, TEXT("Hello %s!"), *Player->GetName());
 		}
 	}
 }
@@ -64,8 +64,7 @@ void AOverlapPlayerActor::OnComponentEndOverlap(
 	{
 		if (const AGamedevUltimateCharacter* Player = Cast<AGamedevUltimateCharacter>(OtherActor); Player)
 		{
-			if (bDebug) UE_LOG(LogGamedevUltimate, Log, TEXT("Bye %s!"), *Player->GetName())
+			if (bDebug) UE_LOG(LogGamedevUltimate, Log, TEXT("Bye %s!"), *Player->GetName());
 		}
 	}
 }
-

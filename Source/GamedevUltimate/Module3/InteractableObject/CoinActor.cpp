@@ -3,8 +3,6 @@
 
 #include "CoinActor.h"
 
-#include <ThirdParty/ShaderConductor/ShaderConductor/External/DirectXShaderCompiler/include/dxc/DXIL/DxilConstants.h>
-
 #include "GamedevUltimate.h"
 #include "GamedevUltimateCharacter.h"
 #include "TimerManager.h"
@@ -37,7 +35,7 @@ void ACoinActor::Tick(const float DeltaTime)
 	{
 		Time += DeltaTime;
 		FVector NextScale = GetActorScale3D();
-		NextScale = FMath::VInterpConstantTo(NextScale, FVector::ZeroVector, Time, ShrinkingSpeed);
+		NextScale = FMath::VInterpConstantTo(NextScale, FVector::ZeroVector, DeltaTime, ShrinkingSpeed);
 		SetActorScale3D(NextScale);
 	}
 	
@@ -55,7 +53,7 @@ void ACoinActor::OnHit(
 	const FHitResult& SweepResult
 )
 {
-	if (OtherActor && OtherActor->IsA(AGamedevUltimateCharacter::StaticClass()))
+	if (!bCollected && OtherActor && OtherActor->IsA(AGamedevUltimateCharacter::StaticClass()))
 	{
 		if (bDebug) UE_LOG(LogGamedevUltimate, Log, TEXT("Coin collected!"));
 		bCollected = true;
@@ -67,8 +65,7 @@ void ACoinActor::OnHit(
 					Destroy();
 				},
 				5.f,
-				true
+				false
 			);
 	}
 }
-
