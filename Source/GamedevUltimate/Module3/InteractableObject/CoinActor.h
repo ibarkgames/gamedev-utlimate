@@ -41,7 +41,7 @@ private:
 	bool bCollected{false};
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=CoinActor, meta=(AllowPrivateAccess=true))
-	float ShrinkingSpeed{0.1f};
+	float ShrinkingSpeed{5.f};
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=CoinActor, meta=(AllowPrivateAccess=true))
 	float Time{0.f};
