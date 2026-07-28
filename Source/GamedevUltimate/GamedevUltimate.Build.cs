@@ -21,7 +21,7 @@ public class GamedevUltimate : ModuleRules
 			"Slate"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara" });
 
 		PublicIncludePaths.AddRange(new string[] {
 			"GamedevUltimate",
