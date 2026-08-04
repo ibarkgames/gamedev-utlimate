@@ -61,6 +61,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CountdownBombActor, meta = (AllowPrivateAccess = true))
 	float ExplosionForce{ 1000.f };
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CountdownBombActor, meta = (AllowPrivateAccess = true))
+	float ExplosionVelocityToCharacter{ 100.f };
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CountdownBombActor, meta = (AllowPrivateAccess = true))
 	TEnumAsByte<ECollisionChannel> ExplosionChannel{ ECC_WorldDynamic };

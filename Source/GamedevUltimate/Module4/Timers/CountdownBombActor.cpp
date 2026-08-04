@@ -100,8 +100,7 @@ void ACountdownBombActor::ApplyForce()
 					*Character->GetName());
 				FVector Direction = Character->GetActorLocation() - GetActorLocation();
 				Direction.Normalize();
-				// TODO: finetune
-				Direction *= ExplosionForce;
+				Direction *= ExplosionVelocityToCharacter;
 				Character->LaunchCharacter(Direction, true, true);
 			}
 			else
