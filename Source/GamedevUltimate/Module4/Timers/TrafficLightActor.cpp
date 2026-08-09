@@ -20,9 +20,16 @@ ATrafficLightActor::ATrafficLightActor()
 void ATrafficLightActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	Material = UMaterialInstanceDynamic::Create(Mesh.Get()->GetMaterial(0), this);
-	Mesh->SetMaterial(0, Material);
+
+	if (UMaterialInterface* ParentMaterial = Mesh ? Mesh->GetMaterial(0) : nullptr)
+	{
+		Material = UMaterialInstanceDynamic::Create(ParentMaterial, this);
+		if (Material)
+		{
+			Mesh->SetMaterial(0, Material);
+			SetColor();
+		}
+	}
 	
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ATrafficLightActor::SwitchState, RedWaitingTime, false);
 }
@@ -37,7 +44,6 @@ void ATrafficLightActor::Tick(float DeltaTime)
 
 void ATrafficLightActor::SwitchState()
 {
-	SetColor();
 	GetWorldTimerManager().ClearTimer(TimerHandle);
 	
 	float NextWaitingTime = 0.f;
@@ -57,23 +63,30 @@ void ATrafficLightActor::SwitchState()
 			NextWaitingTime = RedWaitingTime;
 			break;
 	}
+
+	SetColor();
 	
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ATrafficLightActor::SwitchState, NextWaitingTime, false);
 }
 
 void ATrafficLightActor::SetColor() const
 {
+	if (!Material)
+	{
+		return;
+	}
+
 	FColor Color = FColor::White;
 	switch (State)
 	{
 		case ETrafficLightState::Red:
-			Color = FColor::Yellow;
+			Color = FColor::Red;
 			break;
 		case ETrafficLightState::Yellow:
-			Color = FColor::Green;
+			Color = FColor::Yellow;
 			break;
 		case ETrafficLightState::Green:
-			Color = FColor::Red;
+			Color = FColor::Green;
 			break;
 	}
 	Material->SetVectorParameterValue("BaseColor", Color);

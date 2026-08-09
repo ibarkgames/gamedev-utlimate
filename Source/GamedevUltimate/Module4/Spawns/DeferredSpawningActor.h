@@ -49,6 +49,9 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=DeferredSpawningActor, meta =(AllowPrivateAccess=true))
 	TObjectPtr<AActor> SpawnedActor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=DeferredSpawningActor, meta =(AllowPrivateAccess=true))
+	bool bHasFinishedSpawning{ false };
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=DeferredSpawningActor, meta =(AllowPrivateAccess=true))
 	bool bDebug{false};

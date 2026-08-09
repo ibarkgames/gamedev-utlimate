@@ -30,7 +30,7 @@ private:
 	TArray<FColor> Colors;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LoopingTimerActor, meta = (AllowPrivateAccess = true))
-	int ColorIndex;
+	int ColorIndex{ 0 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = LoopingTimerActor, meta = (AllowPrivateAccess = true))
 	FTimerHandle TimerHandle;

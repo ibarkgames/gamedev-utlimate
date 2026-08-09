@@ -70,7 +70,7 @@ void ABomberBlimpActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if (!IsValid(SpawnedActor)) return;
 	
-	if (OtherActor->IsA(ACharacter::StaticClass()))
+	if (OtherActor && OtherActor->IsA(ACharacter::StaticClass()))
 	{
 		SpawnedActor->SetSimulatePhysics(true);
 		SpawnedActor->SetLifeSpan(SpawnedActorLifeSpawn);
@@ -81,10 +81,10 @@ void ABomberBlimpActor::Schedule()
 {
 	if (!IsValid(SpawnedActor) && !bIsSpawnScheduled)
 	{
+		bIsSpawnScheduled = true;
 		GetWorldTimerManager().SetTimer(
 			TimerHandle,
 			[this] {
-				bIsSpawnScheduled = true;
 				const FVector SpawnLocation = GetActorLocation() + SpawnOffset;
 				const FRotator SpawnRotation = GetActorRotation();
 				FActorSpawnParameters Params = FActorSpawnParameters();
@@ -98,8 +98,14 @@ void ABomberBlimpActor::Schedule()
 						SpawnedActor = Projectile;
 						Projectile->OnDestroyed.AddDynamic(this, &ABomberBlimpActor::HandleSpawnedActorDestroyed);
 						Projectile->SetSimulatePhysics(false);
+						return;
 					}
+
+					Actor->Destroy();
 				}
+
+				bIsSpawnScheduled = false;
+				Schedule();
 			},
 			SpawnDelay, false);
 	}

@@ -62,8 +62,14 @@ void AIcicleTrapActor::Schedule()
 					{
 						SpawnedActor = SpikeActor;
 						SpawnedActor->OnDestroyed.AddDynamic(this, &AIcicleTrapActor::HandleSpawnedActorDestroyed);
+						return;
 					}
+
+					Actor->Destroy();
 				}
+
+				bIsSpawnScheduled = false;
+				Schedule();
 			},
 			SpawnDelay, false);
 	}
@@ -71,5 +77,6 @@ void AIcicleTrapActor::Schedule()
 void AIcicleTrapActor::HandleSpawnedActorDestroyed(AActor* DestroyedActor)
 {
 	bIsSpawnScheduled = false;
+	SpawnedActor = nullptr;
 	Schedule();
 }

@@ -35,25 +35,27 @@ void ACannonActor::Tick(float DeltaTime)
 void ACannonActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->IsA(ACharacter::StaticClass()) && !bScheduled)
+	if (OtherActor && OtherActor->IsA(ACharacter::StaticClass()) && !bScheduled)
 	{
 		bScheduled = true;
-		GetWorldTimerManager().SetTimer(
-			TimerHandle,
-			[this] {
-				const FVector		  Location = GetActorLocation() + GetActorForwardVector() * SpawnOffset;
-				const FRotator		  Rotation = GetActorRotation();
-				FActorSpawnParameters Parameters = FActorSpawnParameters();
-				Parameters.SpawnCollisionHandlingOverride =
-					ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-				Parameters.Owner = this;
-				if (AActor* Actor = GetWorld()->SpawnActor(ProjectileClass, &Location, &Rotation, Parameters))
-				{
-					Shoot(Actor);
-				}
-			},
-			Delay, false);
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &ACannonActor::SpawnProjectile, Delay, false);
 	}
+}
+
+void ACannonActor::SpawnProjectile()
+{
+	const FVector		  Location = GetActorLocation() + GetActorForwardVector() * SpawnOffset;
+	const FRotator		  Rotation = GetActorRotation();
+	FActorSpawnParameters Parameters = FActorSpawnParameters();
+	Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	Parameters.Owner = this;
+	if (AActor* Actor = GetWorld()->SpawnActor(ProjectileClass, &Location, &Rotation, Parameters))
+	{
+		Shoot(Actor);
+		return;
+	}
+
+	bScheduled = false;
 }
 
 void ACannonActor::Shoot(AActor* Actor)

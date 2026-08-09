@@ -28,12 +28,19 @@ void AFirstSpawnActor::BeginPlay()
 	FActorSpawnParameters Parameters = FActorSpawnParameters();
 	Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	const AActor* Actor = GetWorld()->SpawnActor(ActorToSpawn, &Location, &Rotation, Parameters);
-	if (bDebug && Actor) UE_LOG(LogGamedevUltimate, Log, TEXT("AFirstSpawnActor: Actor Spawned: %s at: %s"), *Actor->GetName(), *Location.ToString());
-	if (Actor == nullptr) UE_LOG(LogGamedevUltimate, Warning, TEXT("AFirstSpawnActor: Actor Spawn failed!"))
+	if (bDebug && Actor)
+	{
+		UE_LOG(LogGamedevUltimate, Log, TEXT("AFirstSpawnActor: Actor Spawned: %s at: %s"), *Actor->GetName(),
+			*Location.ToString());
+	}
+
+	if (Actor == nullptr)
+	{
+		UE_LOG(LogGamedevUltimate, Warning, TEXT("AFirstSpawnActor: Actor Spawn failed!"));
+	}
 }
 
 void AFirstSpawnActor::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-

@@ -37,4 +37,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = IcicleSpikeActor, meta = (AllowPrivateAccess = true))
 	TObjectPtr<USoundBase> ExplosionSound;
+
+	bool bHasExploded{ false };
 };

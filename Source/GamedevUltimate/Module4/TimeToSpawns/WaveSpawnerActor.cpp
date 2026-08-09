@@ -33,7 +33,7 @@ void AWaveSpawnerActor::Tick(float DeltaTime)
 void AWaveSpawnerActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (const ACharacter* Character = Cast<ACharacter>(OtherActor); Character && &bWavesStarted)
+	if (const ACharacter* Character = Cast<ACharacter>(OtherActor); Character && !bWavesStarted)
 	{
 		CurrentWave = 0;
 		bWavesStarted = true;
@@ -48,12 +48,7 @@ void AWaveSpawnerActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 
 void AWaveSpawnerActor::ScheduleNextWave()
 {
-	if (WaveSpawnerActorData.Num() < CurrentWave)
-	{
-		return;
-	}
-
-	if (CurrentWave == WaveSpawnerActorData.Num())
+	if (CurrentWave >= WaveSpawnerActorData.Num())
 	{
 		bWavesStarted = false;
 		return;
@@ -75,8 +70,21 @@ void AWaveSpawnerActor::ScheduleNextWave()
 
 void AWaveSpawnerActor::SpawnNextWave(const FWaveData& Data)
 {
+	if (!Data.ActorClassToSpawn)
+	{
+		if (bDebug)
+		{
+			UE_LOG(LogGamedevUltimate, Warning, TEXT("AWaveSpawnerActor: No ActorClassToSpawn set for wave %i"),
+				CurrentWave);
+		}
+		return;
+	}
+
 	if (bDebug)
-		UE_LOG(LogGamedevUltimate, Log, TEXT("AWaveSpawnerActor: SpawnNextWave: %s"), *Data.ActorClassToSpawn->GetName());
+	{
+		UE_LOG(LogGamedevUltimate, Log, TEXT("AWaveSpawnerActor: SpawnNextWave: %s"),
+			*GetNameSafe(Data.ActorClassToSpawn.Get()));
+	}
 	
 	FVector				  SpawnLocation = GetActorLocation();
 	const FRotator		  SpawnRotation = GetActorRotation();
@@ -85,7 +93,9 @@ void AWaveSpawnerActor::SpawnNextWave(const FWaveData& Data)
 	for (int32 i = 0; i < Data.AmountToSpawn; i++)
 	{
 		SpawnLocation.X += Data.PositionOffset;
-		AActor* Actor = GetWorld()->SpawnActor(Data.ActorClassToSpawn, &SpawnLocation, &SpawnRotation, Parameters);
-		Actor->SetLifeSpan(Data.LifeSpanSeconds);
+		if (AActor* Actor = GetWorld()->SpawnActor(Data.ActorClassToSpawn, &SpawnLocation, &SpawnRotation, Parameters))
+		{
+			Actor->SetLifeSpan(Data.LifeSpanSeconds);
+		}
 	}
 }

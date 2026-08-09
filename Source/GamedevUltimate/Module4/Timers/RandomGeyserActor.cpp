@@ -47,10 +47,8 @@ void ARandomGeyserActor::Explode()
 		{
 			if (ACharacter* Character = Cast<ACharacter>(Actor); Character)
 			{
-				FVector Direction = Character->GetActorUpVector();
-				Direction.Normalize();
-				// TODO: finetune
-				Direction *= ExplosionForce;
+				FVector Direction = Character->GetActorUpVector().GetSafeNormal();
+				Direction *= ExplosionForce * CharacterExplosionCoefficient;
 				Character->LaunchCharacter(Direction, true, true);
 			}
 			else
@@ -58,10 +56,7 @@ void ARandomGeyserActor::Explode()
 				if (UPrimitiveComponent* Component = Overlap.GetComponent();
 					Component && Component->IsSimulatingPhysics())
 				{
-					FVector Direction = Component->GetComponentLocation();
-					Direction.X = 0;
-					Direction.Y = 0;
-					Direction.Normalize();
+					FVector Direction = (Component->GetComponentLocation() - GetActorLocation()).GetSafeNormal();
 					Direction *= ExplosionForce;
 					Component->AddImpulseAtLocation(Direction, Component->GetComponentLocation(), FName());
 				}

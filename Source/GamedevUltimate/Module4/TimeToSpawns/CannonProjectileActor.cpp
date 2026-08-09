@@ -85,9 +85,13 @@ void ACannonProjectileActor::Explode()
 	const FCollisionShape Sphere = FCollisionShape::MakeSphere(ExplosionRadius);
 	GetWorld()->OverlapMultiByChannel(Overlaps, GetActorLocation(), FQuat::Identity, ExplosionChannel, Sphere);
 
+	Mesh->SetVisibility(false);
+	Mesh->SetSimulatePhysics(false);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	for (FOverlapResult& Overlap : Overlaps)
 	{
-		if (AActor* Actor = Overlap.GetActor(); Actor)
+		if (AActor* Actor = Overlap.GetActor(); Actor && Actor != this && Actor != GetOwner())
 		{
 			if (ACharacter* Character = Cast<ACharacter>(Actor); Character)
 			{
@@ -102,13 +106,12 @@ void ACannonProjectileActor::Explode()
 			{
 				UE_LOG(
 					LogGamedevUltimate, Log, TEXT("ACannonProjectileActor: Actor overlapping %s"), *Actor->GetName());
-				Overlap.GetComponent()->AddRadialImpulse(
-					GetActorLocation(), ExplosionRadius, ExplosionForce, RIF_Linear, false);
+				if (UPrimitiveComponent* OverlapComponent = Overlap.GetComponent())
+				{
+					OverlapComponent->AddRadialImpulse(
+						GetActorLocation(), ExplosionRadius, ExplosionForce, RIF_Linear, false);
+				}
 			}
-
-			Mesh->SetVisibility(false);
-			Mesh->SetSimulatePhysics(false);
-			Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 	}
 }

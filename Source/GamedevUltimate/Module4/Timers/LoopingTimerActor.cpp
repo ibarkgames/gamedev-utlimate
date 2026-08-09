@@ -2,8 +2,6 @@
 
 #include "LoopingTimerActor.h"
 
-#include "Dataflow/DataflowDebugDraw.h"
-
 ALoopingTimerActor::ALoopingTimerActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -19,18 +17,26 @@ void ALoopingTimerActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create(Mesh.Get()->GetMaterial(0), this);
-	Mesh->SetMaterial(0, Material);
-
-	if (Colors.Num() > 1)
+	UMaterialInterface* ParentMaterial = Mesh ? Mesh->GetMaterial(0) : nullptr;
+	if (!ParentMaterial)
 	{
-		GetWorldTimerManager().SetTimer(
-			TimerHandle,
-			[this, Material]() {
-				SetRandomColorIndex();
-				Material->SetVectorParameterValue("BaseColor", Colors[ColorIndex]);
-			},
-			LoopTime, true);
+		return;
+	}
+
+	if (UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create(ParentMaterial, this))
+	{
+		Mesh->SetMaterial(0, Material);
+
+		if (Colors.Num() > 1)
+		{
+			GetWorldTimerManager().SetTimer(
+				TimerHandle,
+				[this, Material]() {
+					SetRandomColorIndex();
+					Material->SetVectorParameterValue("BaseColor", Colors[ColorIndex]);
+				},
+				LoopTime, true);
+		}
 	}
 }
 

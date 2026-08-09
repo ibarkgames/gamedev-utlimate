@@ -31,7 +31,10 @@ void ARespawningPickupActor::ScheduleSpawning()
 			const FVector Location =  GetActorLocation() + SpawnRelativeLocation;
 			const FRotator Rotation = GetActorRotation();
 			AActor* SpawnedActor = GetWorld()->SpawnActor(ActorClassToSpawn, &Location, &Rotation);
-			SpawnedActor->OnDestroyed.AddDynamic(this, &ARespawningPickupActor::HandleSpawnedActorDestroyed);
+			if (SpawnedActor)
+			{
+				SpawnedActor->OnDestroyed.AddDynamic(this, &ARespawningPickupActor::HandleSpawnedActorDestroyed);
+			}
 		},
 		SpawnDelay,
 		false
@@ -42,4 +45,3 @@ void ARespawningPickupActor::HandleSpawnedActorDestroyed(AActor* DestroyedActor)
 {
 	ScheduleSpawning();
 }
-

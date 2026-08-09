@@ -32,6 +32,15 @@ void AIcicleSpikeActor::BeginPlay()
 void AIcicleSpikeActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (bHasExploded)
+	{
+		return;
+	}
+
+	bHasExploded = true;
+	Mesh->SetNotifyRigidBodyCollision(false);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	UE_LOG(LogGamedevUltimate, Warning, TEXT("Icicle hit: %s"), *GetNameSafe(OtherActor));
 	if (!ExplosionEffect)
 	{
@@ -51,11 +60,13 @@ void AIcicleSpikeActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 	if (SpawnedEffect)
 	{
 		SpawnedEffect->OnSystemFinished.AddDynamic(this, &AIcicleSpikeActor::OnExplosionFinished);
+		return;
 	}
+
+	Destroy();
 }
 
 void AIcicleSpikeActor::OnExplosionFinished(UNiagaraComponent* FinishedComponent)
 {
 	Destroy();
 }
-

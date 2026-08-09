@@ -23,9 +23,12 @@ ADeferredSpawningActor::ADeferredSpawningActor()
 void ADeferredSpawningActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	FTransform Transform;
-	SpawnedActor = GetWorld()->SpawnActorDeferred<AActor>(ActorClassToSpawn, Transform);
+
+	if (ActorClassToSpawn)
+	{
+		FTransform Transform;
+		SpawnedActor = GetWorld()->SpawnActorDeferred<AActor>(ActorClassToSpawn, Transform);
+	}
 	
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ADeferredSpawningActor::OnBeginOverlap);
 }
@@ -45,13 +48,18 @@ void ADeferredSpawningActor::OnBeginOverlap(
 	const FHitResult& SweepResult
 )
 {
-	if (OtherActor)
+	if (OtherActor && !bHasFinishedSpawning)
 		if (const ACharacter* Character = Cast<ACharacter>(OtherActor); Character)
 		{
+			if (!IsValid(SpawnedActor))
+			{
+				return;
+			}
+
 			FTransform Transform = SpawnedActor->GetTransform();
 			Transform.SetLocation(BoxComponent->GetComponentLocation() + FVector(0.0f, 0.0f, 100.0f));
 			Transform.SetRotation(GetActorRotation().Quaternion());
 			UGameplayStatics::FinishSpawningActor(SpawnedActor, Transform);
+			bHasFinishedSpawning = true;
 		}
 }
-

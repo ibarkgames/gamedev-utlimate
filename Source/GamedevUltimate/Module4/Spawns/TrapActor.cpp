@@ -53,12 +53,14 @@ void ATrapActor::OnBeginOverlap(
 			const FVector SpawnLocation = Character->GetActorLocation() + SpawnOffset;
 			const FRotator Rotation = Character->GetActorRotation();
 			AActor* Actor = GetWorld()->SpawnActor(ActorToSpawn, &SpawnLocation, &Rotation);
-			if (bDebug) UE_LOG(LogGamedevUltimate, Log, TEXT("ATrapActor: ActorToSpawn: %s"), *Actor->GetName());
 			if (Actor)
 			{
+				if (bDebug)
+				{
+					UE_LOG(LogGamedevUltimate, Log, TEXT("ATrapActor: ActorToSpawn: %s"), *Actor->GetName());
+				}
 				Actor->SetLifeSpan(5.f);
 			}
 		}
 	}
 }
-

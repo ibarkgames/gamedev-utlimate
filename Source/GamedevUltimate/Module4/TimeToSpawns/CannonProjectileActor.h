@@ -43,23 +43,23 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CannonProjectileActor, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CountdownBombActor, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CannonProjectileActor, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNiagaraSystem> ExplosionEffect;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CountdownBombActor, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CannonProjectileActor, meta = (AllowPrivateAccess = true))
 	TObjectPtr<USoundBase> ExplosionSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CountdownBombActor, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CannonProjectileActor, meta = (AllowPrivateAccess = true))
 	float ExplosionRadius{ 300.f };
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CountdownBombActor, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CannonProjectileActor, meta = (AllowPrivateAccess = true))
 	float ExplosionForce{ 1000.f };
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CountdownBombActor, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CannonProjectileActor, meta = (AllowPrivateAccess = true))
 	float ExplosionCharacterLaunch{ 100.f };
 	
 	bool bHasExploded = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CountdownBombActor, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CannonProjectileActor, meta = (AllowPrivateAccess = true))
 	TEnumAsByte<ECollisionChannel> ExplosionChannel{ ECC_WorldDynamic };
 };

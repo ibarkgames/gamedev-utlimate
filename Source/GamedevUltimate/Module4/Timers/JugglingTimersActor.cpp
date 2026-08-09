@@ -24,13 +24,20 @@ void AJugglingTimersActor::BeginPlay()
 
 	TextComponent->SetVisibility(false);
 
-	UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create(Mesh.Get()->GetMaterial(0), this);
-	Mesh->SetMaterial(0, Material);
-	
-	GetWorldTimerManager().SetTimer(MaterialTimerHandle, [this, Material]() {
-		Material->SetVectorParameterValue("BaseColor", Colors[ColorIndex]);
-		ColorIndex = ColorIndex >= Colors.Num() - 1 ? 0 : ColorIndex + 1;
-	}, MaterialTimerInterval, true);
+	if (UMaterialInterface* ParentMaterial = Mesh ? Mesh->GetMaterial(0) : nullptr)
+	{
+		if (UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create(ParentMaterial, this))
+		{
+			Mesh->SetMaterial(0, Material);
+			if (Colors.Num() > 0)
+			{
+				GetWorldTimerManager().SetTimer(MaterialTimerHandle, [this, Material]() {
+					Material->SetVectorParameterValue("BaseColor", Colors[ColorIndex]);
+					ColorIndex = ColorIndex >= Colors.Num() - 1 ? 0 : ColorIndex + 1;
+				}, MaterialTimerInterval, true);
+			}
+		}
+	}
 	
 	GetWorldTimerManager().SetTimer(
 		LogTimerHandle, [this]() {
@@ -38,9 +45,12 @@ void AJugglingTimersActor::BeginPlay()
 			TextComponent->SetText(FText::AsNumber(GetWorld()->GetTimeSeconds()));
 		}, LogTimerInterval, true);
 	
-	GetWorldTimerManager().SetTimer(SpawnTimerHandle, [this]() {
-		GetWorld()->SpawnActor(ActorClassToSpawn, &SpawnLocation, &SpawnRotation, FActorSpawnParameters());
-	}, SpawnTimerInterval, true);
+	if (ActorClassToSpawn)
+	{
+		GetWorldTimerManager().SetTimer(SpawnTimerHandle, [this]() {
+			GetWorld()->SpawnActor(ActorClassToSpawn, &SpawnLocation, &SpawnRotation, FActorSpawnParameters());
+		}, SpawnTimerInterval, true);
+	}
 }
 
 void AJugglingTimersActor::Tick(float DeltaTime)
