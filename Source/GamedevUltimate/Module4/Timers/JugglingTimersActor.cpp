@@ -1,0 +1,59 @@
+﻿// Copyright iBarkGames
+
+#include "JugglingTimersActor.h"
+
+#include "Components/TextRenderComponent.h"
+
+AJugglingTimersActor::AJugglingTimersActor()
+{
+	PrimaryActorTick.bCanEverTick = true;
+
+	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>("SceneComponent");
+	SetRootComponent(SceneComponent);
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	Mesh->SetupAttachment(RootComponent);
+
+	TextComponent = CreateDefaultSubobject<UTextRenderComponent>("TextComponent");
+	TextComponent->SetupAttachment(RootComponent);
+}
+
+void AJugglingTimersActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	TextComponent->SetVisibility(false);
+
+	if (UMaterialInterface* ParentMaterial = Mesh ? Mesh->GetMaterial(0) : nullptr)
+	{
+		if (UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create(ParentMaterial, this))
+		{
+			Mesh->SetMaterial(0, Material);
+			if (Colors.Num() > 0)
+			{
+				GetWorldTimerManager().SetTimer(MaterialTimerHandle, [this, Material]() {
+					Material->SetVectorParameterValue("BaseColor", Colors[ColorIndex]);
+					ColorIndex = ColorIndex >= Colors.Num() - 1 ? 0 : ColorIndex + 1;
+				}, MaterialTimerInterval, true);
+			}
+		}
+	}
+	
+	GetWorldTimerManager().SetTimer(
+		LogTimerHandle, [this]() {
+			TextComponent->SetVisibility(true);
+			TextComponent->SetText(FText::AsNumber(GetWorld()->GetTimeSeconds()));
+		}, LogTimerInterval, true);
+	
+	if (ActorClassToSpawn)
+	{
+		GetWorldTimerManager().SetTimer(SpawnTimerHandle, [this]() {
+			GetWorld()->SpawnActor(ActorClassToSpawn, &SpawnLocation, &SpawnRotation, FActorSpawnParameters());
+		}, SpawnTimerInterval, true);
+	}
+}
+
+void AJugglingTimersActor::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
