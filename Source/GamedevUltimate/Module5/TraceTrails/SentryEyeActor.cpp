@@ -30,7 +30,7 @@ ASentryEyeActor::ASentryEyeActor()
 	TextRenderComponent->SetHorizontalAlignment(EHTA_Center);
 	TextRenderComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
 	TextRenderComponent->SetRelativeRotation(FRotator(0.0f, -45.0f, 0.0f));
-	TextRenderComponent->SetText(FText::FromString("TraceRadarActor"));
+	TextRenderComponent->SetText(FText::FromString("SentryEyeActor"));
 }
 
 void ASentryEyeActor::BeginPlay()
