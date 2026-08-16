@@ -3,6 +3,7 @@
 #include "ObjectTypeTraceActor.h"
 
 #include "Components/TextRenderComponent.h"
+#include "DrawDebugHelpers.h"
 
 AObjectTypeTraceActor::AObjectTypeTraceActor()
 {

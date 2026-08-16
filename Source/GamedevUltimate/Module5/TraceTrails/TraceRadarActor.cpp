@@ -3,6 +3,9 @@
 #include "TraceRadarActor.h"
 
 #include "Components/TextRenderComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
 
 ATraceRadarActor::ATraceRadarActor()
 {
@@ -53,14 +56,18 @@ void ATraceRadarActor::Tick(const float DeltaTime)
 	FColor TraceColor = FColor::Green;
 	if (HitResult.bBlockingHit && HitResult.GetActor() != nullptr)
 	{
-		TextRenderComponent->SetVisibility(true);
+		const APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+		if (HitResult.GetActor() == PlayerPawn)
+		{
+			TextRenderComponent->SetVisibility(true);
 
-		const FString WarningText =
-			FString::Printf(TEXT("Intruder detected! Name: %s"), *HitResult.GetActor()->GetName());
-		TextRenderComponent->SetText(FText::FromString(WarningText));
-		GetWorldTimerManager().SetTimer(
-			WarningTimer, [this] { TextRenderComponent->SetVisibility(false); }, WarningMessageTime, false);
-		TraceColor = FColor::Red;
+			const FString WarningText =
+				FString::Printf(TEXT("Intruder detected! Name: %s"), *HitResult.GetActor()->GetName());
+			TextRenderComponent->SetText(FText::FromString(WarningText));
+			GetWorldTimerManager().SetTimer(
+				WarningTimer, [this] { TextRenderComponent->SetVisibility(false); }, WarningMessageTime, false);
+			TraceColor = FColor::Red;
+		}
 	}
 	DrawDebugLine(GetWorld(), StartLocation, EndLocation, TraceColor);
 }

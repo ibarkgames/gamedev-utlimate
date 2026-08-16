@@ -13,7 +13,7 @@
 // The trace function returns a bool that tells you if something was hit.
 // If the trace hits something, log a message to the screen: "Trace hit something!".
 // Draw a debug line from the start to the end of the trace so you can see it.
-// A green line when the trace hits something, red line when it doesn't.
+// A red line when the trace hits something, green line when it doesn't.
 // Place the Actor in the level, point it at an Actor that blocks the ECC_Visibility channel.
 // Try moving in front of the trace with the player character, is the trace detecting it?
 // To be seen the component needs to block the trace channel that you're using.

@@ -3,6 +3,7 @@
 #include "XRayTraceActor.h"
 
 #include "Components/TextRenderComponent.h"
+#include "DrawDebugHelpers.h"
 
 AXRayTraceActor::AXRayTraceActor()
 {
@@ -41,8 +42,12 @@ void AXRayTraceActor::Tick(const float DeltaTime)
 		TextRenderComponent->SetVisibility(true);
 		TextRenderComponent->SetText(FText::AsNumber(HitResults.Num()));
 	}
+	else
+	{
+		TextRenderComponent->SetVisibility(false);
+	}
 
-	for (auto HitResult : HitResults)
+	for (const auto& HitResult : HitResults)
 	{
 		DrawDebugSphere(
 			GetWorld(), HitResult.ImpactPoint, 15.f, 16, HitResult.bBlockingHit ? FColor::Red : FColor::Yellow);

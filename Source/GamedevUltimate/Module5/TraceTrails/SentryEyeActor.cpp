@@ -7,6 +7,7 @@
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "DrawDebugHelpers.h"
 
 ASentryEyeActor::ASentryEyeActor()
 {
@@ -73,7 +74,8 @@ void ASentryEyeActor::Tick(const float DeltaTime)
 
 		FHitResult HitResult;
 		const FVector StartLocation = Mesh2->GetComponentLocation();
-		const FVector EndLocation = StartLocation + GetActorForwardVector() * TraceDistance;
+		const FVector ToCharacter = (CharacterLocation - StartLocation);
+		const FVector EndLocation = StartLocation + ToCharacter.GetSafeNormal() * FMath::Min(ToCharacter.Size(), TraceDistance);
 		FCollisionObjectQueryParams CollisionObjectQueryParams;
 		CollisionObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
 		CollisionObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
@@ -86,17 +88,23 @@ void ASentryEyeActor::Tick(const float DeltaTime)
 		if (HitResult.GetActor() == TraceRadarCharacter)
 		{
 			LineColor = FColor::Red;
-			MaterialInstance->SetVectorParameterValue("BaseColor", FColor::Red);
+			if (MaterialInstance)
+			{
+				MaterialInstance->SetVectorParameterValue("BaseColor", FColor::Red);
+			}
 		}
 		else
 		{
-			MaterialInstance->SetVectorParameterValue("BaseColor", FColor::White);
+			if (MaterialInstance)
+			{
+				MaterialInstance->SetVectorParameterValue("BaseColor", FColor::White);
+			}
 		}
 		if (HitResult.bBlockingHit)
 		{
 			DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 15.f, 32, LineColor);
 		}
-		DrawDebugLine(GetWorld(), GetActorLocation(), CharacterLocation, LineColor);
+		DrawDebugLine(GetWorld(), StartLocation, CharacterLocation, LineColor);
 	}
 }
 

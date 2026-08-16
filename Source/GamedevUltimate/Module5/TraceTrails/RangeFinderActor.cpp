@@ -4,6 +4,7 @@
 
 #include "GamedevUltimate.h"
 #include "Components/TextRenderComponent.h"
+#include "DrawDebugHelpers.h"
 
 ARangeFinderActor::ARangeFinderActor()
 {

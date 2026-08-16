@@ -3,6 +3,7 @@
 #include "SelectiveVisionActor.h"
 
 #include "Components/TextRenderComponent.h"
+#include "DrawDebugHelpers.h"
 
 ASelectiveVisionActor::ASelectiveVisionActor()
 {
